@@ -3,12 +3,20 @@ package com.example.lab_reproductor_musica;
 import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.SeekBar;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends AppCompatActivity
 {
@@ -17,25 +25,132 @@ public class MainActivity extends AppCompatActivity
     private Field[] trackList;
     private int trackId;
     private boolean isPlaying;
+    private Timer timer;
+    private SeekBar trackProgress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //Inicializar las variables
-        trackList = R.raw.class.getFields();
-        audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-        trackId = 0;
-        isPlaying = false;
-        getTrackById(trackId);
+        //Initialize the variables
+        try
+        {
+            trackList = R.raw.class.getFields();
+            trackId = 0;
+            isPlaying = false;
+            timer = new Timer();
+            trackProgress = findViewById(R.id.seekBarProgress);
+            audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+            mediaPlayer = MediaPlayer.create(this, getTrackId(trackId));
+            getTrackById(trackId);
+            setTrackList();
+            //Volumen bar
+            SeekBar volumenControl = findViewById(R.id.seekBarVolume);
+            volumenControl.setMax(audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC));
+            volumenControl.setProgress(audioManager.getStreamVolume(AudioManager.STREAM_MUSIC));
+            volumenControl.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
+            {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
+                {
+                    audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progress, 0);
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar){}
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar){}
+            });
+            //Track progress
+            trackProgress.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener()
+            {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser)
+                {
+                    if(fromUser)
+                    {
+                        mediaPlayer.seekTo(progress);
+                    }
+
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar){}
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar){}
+            });
+        }
+        catch(IllegalAccessException e)
+        {
+            Log.i("track", e.getMessage());
+        }
+    }
+
+    private void setTimer()
+    {
+        timer.scheduleAtFixedRate(
+            new TimerTask()
+            {
+                @Override
+                public void run()
+                {
+                    trackProgress.setProgress(mediaPlayer.getCurrentPosition());
+                    if(trackProgress.getMax() == trackProgress.getProgress())
+                    {
+                        btnListenerNext(null);
+                    }
+                }
+            }, 0, 1000
+        );
+    }
+
+    public void setTrackList()
+    {
+        ListView listView = findViewById(R.id.listViewTracks);
+        ArrayList<String> trackNameList = new ArrayList<>();
+        for(Field field : trackList)
+        {
+            trackNameList.add(field.getName());
+        }
+        ArrayAdapter<String> adapter =  new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, trackNameList);
+        listView.setAdapter(adapter);
     }
 
     public void getTrackById(int pTrackId)
     {
-        String track = trackList[pTrackId].getName();
-        Uri trackUri = Uri.parse(R.raw.class.getResource(track).getPath());
-        mediaPlayer = MediaPlayer.create(this, trackUri);
+        try
+        {
+            int newTrackId = getTrackId(pTrackId);
+            mediaPlayer.release();
+            mediaPlayer = MediaPlayer.create(this, newTrackId);
+            //Track progress bar
+            trackProgress.setMax(mediaPlayer.getDuration());
+            play();
+        }
+        catch(IllegalAccessException e)
+        {
+            Log.i("track", e.getMessage());
+        }
+    }
+
+    private int getTrackId(int pTrackId) throws IllegalAccessException
+    {
+        return trackList[pTrackId].getInt(trackList[pTrackId]); //extracted from stackoverflow
+    }
+
+    private void pause()
+    {
+        mediaPlayer.pause();
+        ((ImageView)findViewById(R.id.btnPlay)).setImageResource(R.drawable.icon_pause);
+    }
+
+    private void play()
+    {
+        mediaPlayer.start();
+        ((ImageView)findViewById(R.id.btnPlay)).setImageResource(R.drawable.icon_play);
     }
 
     public void btnListenerPrevious(View view)
@@ -48,6 +163,7 @@ public class MainActivity extends AppCompatActivity
         {
             trackId--;
         }
+        getTrackById(trackId);
     }
 
     public void btnListenerPlay(View view)
@@ -55,12 +171,12 @@ public class MainActivity extends AppCompatActivity
         if(isPlaying)
         {
             isPlaying = false;
-            mediaPlayer.pause();
+            pause();
         }
         else
         {
             isPlaying = true;
-            mediaPlayer.start();
+            play();
         }
     }
 
@@ -74,5 +190,6 @@ public class MainActivity extends AppCompatActivity
         {
             trackId++;
         }
+        getTrackById(trackId);
     }
 }

@@ -10,10 +10,7 @@
     <LinearLayout
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
-        android:layout_height="282dp"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="0dp"
-        android:layout_marginEnd="0dp"
+        android:layout_height="298dp"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -36,42 +33,39 @@
                 android:layout_alignParentEnd="true"
                 android:layout_marginStart="0dp"
                 android:layout_marginTop="40dp"
-                android:layout_marginEnd="3dp" />
+                android:layout_marginEnd="0dp" />
 
             <ImageView
                 android:id="@+id/btnPrevious"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
                 android:layout_below="@+id/lbTrackName"
                 android:layout_alignParentStart="true"
                 android:layout_marginStart="50dp"
                 android:layout_marginTop="24dp"
-                app:srcCompat="@drawable/icon_previous"
-                android:onClick="btnListenerPrevious"/>
+                android:onClick="btnListenerPrevious"
+                app:srcCompat="@drawable/icon_previous" />
 
             <ImageView
                 android:id="@+id/btnPlay"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
                 android:layout_below="@+id/lbTrackName"
-                android:layout_marginStart="62dp"
+                android:layout_centerHorizontal="true"
                 android:layout_marginTop="24dp"
-                android:layout_toEndOf="@+id/btnPrevious"
-                app:srcCompat="@drawable/icon_play"
-                android:onClick="btnListenerPlay"/>
+                android:onClick="btnListenerPlay"
+                app:srcCompat="@drawable/icon_play" />
 
             <ImageView
                 android:id="@+id/btnNext"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
                 android:layout_below="@+id/lbTrackName"
                 android:layout_alignParentEnd="true"
-                android:layout_marginStart="64dp"
                 android:layout_marginTop="24dp"
                 android:layout_marginEnd="50dp"
-                android:layout_toEndOf="@+id/btnPlay"
-                app:srcCompat="@drawable/icon_next"
-                android:onClick="btnListenerNext"/>
+                android:onClick="btnListenerNext"
+                app:srcCompat="@drawable/icon_next" />
 
             <SeekBar
                 android:id="@+id/seekBarVolume"
@@ -81,7 +75,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"
                 android:layout_marginStart="0dp"
-                android:layout_marginTop="48dp"
+                android:layout_marginTop="40dp"
                 android:layout_marginEnd="0dp" />
 
             <TextView
@@ -93,18 +87,30 @@
                 android:layout_marginStart="0dp"
                 android:layout_marginEnd="0dp"
                 android:text="TextView"
-                android:textSize="24sp"/>
+                android:textSize="24sp" />
 
         </RelativeLayout>
     </LinearLayout>
 
-    <ListView
-        android:id="@+id/listViewTracks"
+    <LinearLayout
+        android:id="@+id/linearListView"
         android:layout_width="match_parent"
-        android:layout_height="433dp"
+        android:layout_height="302dp"
+        android:layout_below="@+id/linearLayout"
+        android:orientation="vertical"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout">
+
+        <ListView
+            android:id="@+id/listViewTracks"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="0dp"
+            android:layout_marginBottom="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+    </LinearLayout>
 
 </android.support.constraint.ConstraintLayout>
