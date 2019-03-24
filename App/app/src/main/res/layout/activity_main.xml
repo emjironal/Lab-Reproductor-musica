@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/background_light"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="282dp"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="0dp"
+        android:layout_marginEnd="0dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <RelativeLayout
+            android:id="@+id/relativeLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/background_light"
+            tools:layout_editor_absoluteX="52dp"
+            tools:layout_editor_absoluteY="16dp">
+
+            <SeekBar
+                android:id="@+id/seekBarProgress"
+                android:layout_width="match_parent"
+                android:layout_height="28dp"
+                android:layout_below="@+id/btnPlay"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="40dp"
+                android:layout_marginEnd="3dp" />
+
+            <ImageView
+                android:id="@+id/btnPrevious"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/lbTrackName"
+                android:layout_alignParentStart="true"
+                android:layout_marginStart="50dp"
+                android:layout_marginTop="24dp"
+                app:srcCompat="@drawable/icon_previous"
+                android:onClick="btnListenerPrevious"/>
+
+            <ImageView
+                android:id="@+id/btnPlay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/lbTrackName"
+                android:layout_marginStart="62dp"
+                android:layout_marginTop="24dp"
+                android:layout_toEndOf="@+id/btnPrevious"
+                app:srcCompat="@drawable/icon_play"
+                android:onClick="btnListenerPlay"/>
+
+            <ImageView
+                android:id="@+id/btnNext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/lbTrackName"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="64dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="50dp"
+                android:layout_toEndOf="@+id/btnPlay"
+                app:srcCompat="@drawable/icon_next"
+                android:onClick="btnListenerNext"/>
+
+            <SeekBar
+                android:id="@+id/seekBarVolume"
+                android:layout_width="match_parent"
+                android:layout_height="28dp"
+                android:layout_below="@+id/seekBarProgress"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="48dp"
+                android:layout_marginEnd="0dp" />
+
+            <TextView
+                android:id="@+id/lbTrackName"
+                android:layout_width="match_parent"
+                android:layout_height="31dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="0dp"
+                android:layout_marginEnd="0dp"
+                android:text="TextView"
+                android:textSize="24sp"/>
+
+        </RelativeLayout>
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/listViewTracks"
+        android:layout_width="match_parent"
+        android:layout_height="433dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+
+</android.support.constraint.ConstraintLayout>
