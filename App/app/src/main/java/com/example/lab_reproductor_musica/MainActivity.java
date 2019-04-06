@@ -25,8 +25,8 @@ public class MainActivity extends AppCompatActivity
     private Field[] trackList;
     private int trackId;
     private boolean isPlaying;
-    private Timer timer;
     private SeekBar trackProgress;
+    private Timer timer = new Timer();
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -39,11 +39,9 @@ public class MainActivity extends AppCompatActivity
             trackList = R.raw.class.getFields();
             trackId = 0;
             isPlaying = false;
-            timer = new Timer();
             trackProgress = findViewById(R.id.seekBarProgress);
             audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
             mediaPlayer = MediaPlayer.create(this, getTrackId(trackId));
-            getTrackById(trackId);
             setTrackList();
             //Volumen bar
             SeekBar volumenControl = findViewById(R.id.seekBarVolume);
@@ -73,7 +71,6 @@ public class MainActivity extends AppCompatActivity
                     {
                         mediaPlayer.seekTo(progress);
                     }
-
                 }
 
                 @Override
@@ -82,6 +79,9 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 public void onStopTrackingTouch(SeekBar seekBar){}
             });
+            trackProgress.setMax(mediaPlayer.getDuration());
+            setTimer();
+            play();
         }
         catch(IllegalAccessException e)
         {
@@ -97,10 +97,14 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 public void run()
                 {
-                    trackProgress.setProgress(mediaPlayer.getCurrentPosition());
                     if(trackProgress.getMax() == trackProgress.getProgress())
                     {
+                        trackProgress.setProgress(0);
                         btnListenerNext(null);
+                    }
+                    else
+                    {
+                        trackProgress.setProgress(mediaPlayer.getCurrentPosition());
                     }
                 }
             }, 0, 1000
@@ -127,12 +131,27 @@ public class MainActivity extends AppCompatActivity
             mediaPlayer.release();
             mediaPlayer = MediaPlayer.create(this, newTrackId);
             //Track progress bar
+            //trackProgress.setProgress(0);
             trackProgress.setMax(mediaPlayer.getDuration());
             play();
         }
         catch(IllegalAccessException e)
         {
             Log.i("track", e.getMessage());
+        }
+    }
+
+    private void stop(int newTrackId)
+    {
+        if(trackProgress.getMax() == trackProgress.getProgress())
+        {
+
+        }
+        else
+        {
+            mediaPlayer.release();
+            mediaPlayer = MediaPlayer.create(this, newTrackId);
+            setTimer();
         }
     }
 
@@ -144,13 +163,15 @@ public class MainActivity extends AppCompatActivity
     private void pause()
     {
         mediaPlayer.pause();
-        ((ImageView)findViewById(R.id.btnPlay)).setImageResource(R.drawable.icon_pause);
+        ((ImageView)findViewById(R.id.btnPlay)).setImageResource(R.drawable.icon_play);
+        isPlaying = false;
     }
 
     private void play()
     {
         mediaPlayer.start();
-        ((ImageView)findViewById(R.id.btnPlay)).setImageResource(R.drawable.icon_play);
+        ((ImageView)findViewById(R.id.btnPlay)).setImageResource(R.drawable.icon_pause);
+        isPlaying = true;
     }
 
     public void btnListenerPrevious(View view)
