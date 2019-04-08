@@ -8,10 +8,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SeekBar;
+import android.widget.TextView;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -82,6 +84,16 @@ public class MainActivity extends AppCompatActivity
             trackProgress.setMax(mediaPlayer.getDuration());
             setTimer();
             play();
+            ListView listView = findViewById(R.id.listViewTracks);
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    trackId = position;
+                    getTrackById(position);
+                }
+            });
+            TextView txt = findViewById(R.id.lbTrackName);
+            txt.setText(trackList[trackId].getName());
         }
         catch(IllegalAccessException e)
         {
@@ -97,12 +109,7 @@ public class MainActivity extends AppCompatActivity
                 @Override
                 public void run()
                 {
-                    if(trackProgress.getMax() == trackProgress.getProgress())
-                    {
-                        trackProgress.setProgress(0);
-                        btnListenerNext(null);
-                    }
-                    else
+                    if(trackProgress.getMax() != trackProgress.getProgress())
                     {
                         trackProgress.setProgress(mediaPlayer.getCurrentPosition());
                     }
@@ -127,15 +134,15 @@ public class MainActivity extends AppCompatActivity
     {
         try
         {
+            TextView txt = findViewById(R.id.lbTrackName);
             int newTrackId = getTrackId(pTrackId);
             mediaPlayer.release();
             mediaPlayer = MediaPlayer.create(this, newTrackId);
-            //Track progress bar
-            //trackProgress.setProgress(0);
-            trackProgress.setMax(mediaPlayer.getDuration());
+            txt.setText(trackList[trackId].getName());
+            trackProgress.setMax(mediaPlayer.getDuration() + 1000);
             play();
         }
-        catch(IllegalAccessException e)
+        catch(Exception e)
         {
             Log.i("track", e.getMessage());
         }
