@@ -29,6 +29,8 @@ public class MainActivity extends AppCompatActivity
     private boolean isPlaying;
     private SeekBar trackProgress;
     private Timer timer = new Timer();
+    private TextView progressLeft;
+    private TextView currentProgress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -44,6 +46,8 @@ public class MainActivity extends AppCompatActivity
             trackProgress = findViewById(R.id.seekBarProgress);
             audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
             mediaPlayer = MediaPlayer.create(this, getTrackId(trackId));
+            currentProgress = findViewById(R.id.txtCurrentProgress);
+            progressLeft = findViewById(R.id.txtProgressLeft);
             setTrackList();
             //Volumen bar
             SeekBar volumenControl = findViewById(R.id.seekBarVolume);
@@ -101,6 +105,14 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    public String formatTime(int miliseconds)
+    {
+        int totalSeconds = miliseconds / 1000;
+        int minutes = totalSeconds / 60;
+        int seconds = totalSeconds % 60;
+        return String.format("%02d:%02d", minutes, seconds);
+    }
+
     private void setTimer()
     {
         timer.scheduleAtFixedRate(
@@ -112,6 +124,13 @@ public class MainActivity extends AppCompatActivity
                     if(trackProgress.getMax() != trackProgress.getProgress())
                     {
                         trackProgress.setProgress(mediaPlayer.getCurrentPosition());
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                currentProgress.setText(formatTime(mediaPlayer.getCurrentPosition()));
+                                progressLeft.setText(formatTime(mediaPlayer.getDuration() - mediaPlayer.getCurrentPosition()));
+                            }
+                        });
                     }
                 }
             }, 0, 1000
